@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What is pi</title>
+  </head>
+  <body>
+    <main
+      style="
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <div style="display: flex">
+        <h1 style="display: flex; flex-direction: row">π</h1>
+        <button
+          onclick="location.reload()"
+          style="
+            display: flex;
+            flex-direction: row;
+            margin-left: 15px;
+            margin-top: 15px;
+            height: 25px;
+            align-self: center;
+          "
+        >
+          play animation
+        </button>
+      </div>
+      <canvas
+        id="c"
+        width="410"
+        height="600"
+        style="background-color: #d0e2fc; border: lightgray 1px solid"
+      ></canvas>
+    </main>
+  </body>
+  <script>
+    const ctx = document.querySelector('#c').getContext('2d')
+    const circle = { cx: 200, cy: 160, r: 150 }
+    const dotStartPos = { cx: circle.cx - circle.r, cy: circle.cy, r: 5 }
+    const dotEndPos = { cx: circle.cx + circle.r, cy: circle.cy, r: 5 }
+
+    const txtStartPos = { x: 13, y: circle.r * 2 + 40 }
+    const lineHeight = 20
+    let line = 0
+    const txtPosY = () => txtStartPos.y + lineHeight * line
+
+    play()
+
+    function play() {
+      ctx.clearRect(0, 0, 400, 500)
+      drawBg()
+      printQuestion()
+      animateDot()
+    }
+
+    async function animateDot() {
+      const stepLeng = circle.r / 1500
+      const stepRadian = stepLeng / circle.r
+      const dot0 = { cx: circle.cx - circle.r, cy: circle.cy, r: 0.1 }
+      const dot1 = {
+        cx: circle.cx - circle.r,
+        cy: circle.cy + circle.r,
+        r: 0.1,
+      }
+      let hasShownTextForDot0 = false,
+        i0 = 1
+      for (
+        var x = dotStartPos.cx, i = 1;
+        stepRadian * i <= Math.PI;
+        x = x + stepLeng, ++i
+      ) {
+        if (x - circle.cx <= circle.r) {
+          dot0.cx = x
+          drawCircle(ctx, dot0, 'red', 'red')
+        } else {
+          if (!hasShownTextForDot0) {
+            hasShownTextForDot0 = true
+            println(
+              ctx,
+              `turns out it took red ${(i0 = i)} steps to arrive at other end`,
+              'red',
+              txtStartPos.x,
+              txtPosY()
+            )
+          }
+        }
+
+        dot1.cx = circle.cx + circle.r * Math.cos(stepRadian * i) * -1
+        dot1.cy = circle.cy + circle.r * Math.sin(stepRadian * i) * -1
+        drawCircle(ctx, dot1, 'blue', 'blue')
+
+        await new Promise((res, rej) => setTimeout(res, 0))
+      }
+
+      println(
+        ctx,
+        `and it took blue ${i} steps, that means it'd take`,
+        'blue',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `${i * 2} (${i} * 2) steps to walk the full circle`,
+        'blue',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `the ratio of the steps took to walk the full circle to`,
+        'orange',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `the steps took to walk the diameter is about ${((i * 2) / i0).toFixed(
+          2
+        )}`,
+        'orange',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `why, does it look like the value of π? i thought so too, well,`,
+        'purple',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `π is after all, the ratio of circumference to diameter ^_-`,
+        'purple',
+        txtStartPos.x,
+        txtPosY()
+      )
+    }
+
+    function drawBg() {
+      drawCircle(ctx, circle)
+      drawDiameter(ctx)
+      drawCircle(ctx, dotStartPos, '#f5f5f5', 'grey')
+      drawCircle(ctx, dotEndPos, '#f5f5f5', 'grey')
+    }
+
+    function drawCircle(
+      ctx,
+      { cx, cy, r },
+      fillStyle = '#fff7cc',
+      strokeStyle = 'black'
+    ) {
+      ctx.fillStyle = fillStyle
+      ctx.strokeStyle = strokeStyle
+      ctx.beginPath()
+      ctx.arc(cx, cy, r, 0, Math.PI * 2)
+      ctx.stroke()
+      ctx.fill()
+    }
+
+    function drawDiameter(ctx) {
+      ctx.strokeStyle = 'grey'
+      ctx.beginPath()
+      ctx.moveTo(circle.cx - circle.r, circle.cy)
+      ctx.lineTo(circle.cx + circle.r, circle.cy)
+      ctx.closePath()
+      ctx.stroke()
+    }
+
+    function println(ctx, text, colour, x, y) {
+      ctx.fillStyle = colour
+      ctx.font = '16px serif'
+      ctx.beginPath()
+      ctx.fillText(text, x, y)
+      ++line
+    }
+
+    function printQuestion() {
+      println(
+        ctx,
+        `imagine two dots, blue and red, they travel by steps,`,
+        'black',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `each step is ${
+          circle.r / 1500
+        } pixel. starting from one side of the circle,`,
+        'black',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `they both want to get to the other side of the circle, red`,
+        'black',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `takes the straight line while blue stick to the curve, now`,
+        'black',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `the question is how many steps would it each take them`,
+        'purple',
+        txtStartPos.x,
+        txtPosY()
+      )
+      println(
+        ctx,
+        `to get to the other end?`,
+        'purple',
+        txtStartPos.x,
+        txtPosY()
+      )
+    }
+  </script>
+</html>
