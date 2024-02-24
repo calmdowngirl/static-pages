@@ -8,7 +8,6 @@
   <body>
     <main
       style="
-        min-width: 410px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -33,17 +32,15 @@
       </div>
       <canvas
         id="c"
-        width="410"
+        width="390"
         height="600"
-        min-width="410"
-        min-height="600"
         style="background-color: #d0e2fc; border: lightgray 1px solid"
       ></canvas>
     </main>
   </body>
   <script>
     const ctx = document.querySelector('#c').getContext('2d')
-    const circle = { cx: 200, cy: 160, r: 150 }
+    const circle = { cx: 195, cy: 160, r: 150 }
     const dotStartPos = { cx: circle.cx - circle.r, cy: circle.cy, r: 5 }
     const dotEndPos = { cx: circle.cx + circle.r, cy: circle.cy, r: 5 }
 
@@ -177,10 +174,11 @@
     }
 
     function println(ctx, text, colour, x, y) {
+      const maxWidth = 350
       ctx.fillStyle = colour
       ctx.font = '16px serif'
       ctx.beginPath()
-      ctx.fillText(text, x, y)
+      ctx.fillText(text, x, y, maxWidth)
       ++line
     }
 
